@@ -13,7 +13,6 @@ import java.time.LocalDate;
 public class UserCreateRequest {
 
     @Email(message = "Email không đúng định dạng")
-    @NotBlank(message = "Email không được để trống")
     String email;
 
     @Size(min = 6, max = 255, message = "Mật khẩu phải từ 6 đến 255 ký tự")

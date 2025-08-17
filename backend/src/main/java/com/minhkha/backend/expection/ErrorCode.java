@@ -17,6 +17,13 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH(1006, "Mật khẩu không chính xác", HttpStatus.UNAUTHORIZED),
     USER_ALREADY_EXIST(1007,"Email đã tồn tại", HttpStatus.BAD_REQUEST),
     INVALID_ARGUMENT(1008, "Lỗi validation", HttpStatus.BAD_REQUEST),
+    TEMPLATE_NOT_FOUND(1010, "Không tìm thấy template mail", HttpStatus.INTERNAL_SERVER_ERROR),
+    EMAIL_TYPE_INVALID(1011, "Mail type không tồn tại", HttpStatus.BAD_REQUEST),
+    EMAIL_SEND_FAILED(1012, "Gửi mail thất bại", HttpStatus.INTERNAL_SERVER_ERROR),
+    RESEND_OTP_TYPE_INVALID(1012, "Resend otp type không hợp lệ", HttpStatus.BAD_REQUEST),
+    EMAIL_NOT_EXISTED(1013, "Email không tồn tại trong hệ thống", HttpStatus.NOT_FOUND),
+    OTP_INVALID(1014, "Mã OTP không đúng", HttpStatus.BAD_REQUEST),
+    OTP_EXPIRED(1015, "Mã OTP đã hết hạn", HttpStatus.BAD_REQUEST),
     ;
     int code;
     String message;

@@ -1,12 +1,11 @@
 package com.minhkha.backend.controller;
 
-import com.minhkha.backend.dto.request.AuthRequest;
-import com.minhkha.backend.dto.request.IntrospectRequest;
-import com.minhkha.backend.dto.request.UserCreateRequest;
+import com.minhkha.backend.dto.request.*;
 import com.minhkha.backend.dto.response.ApiResponse;
 import com.minhkha.backend.dto.response.AuthenticationResponse;
 import com.minhkha.backend.dto.response.IntrospectResponse;
 import com.minhkha.backend.eums.AuthProvider;
+import com.minhkha.backend.eums.ResendOtpType;
 import com.minhkha.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +31,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ApiResponse<AuthenticationResponse> register(
+    public ApiResponse<Void> register(
             @RequestBody @Valid UserCreateRequest request
     ) {
-        return ApiResponse.<AuthenticationResponse>builder()
-                .data(authService.register(request))
+        authService.register(request);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 
@@ -46,6 +45,30 @@ public class AuthController {
     ) {
         return ApiResponse.<IntrospectResponse>builder()
                 .data(authService.introspect(request))
+                .build();
+    }
+
+    @PostMapping("/send-otp")
+    public ApiResponse<Void> resendOtp(
+            @RequestBody @Valid ResendOtpRequest request,
+            @RequestParam ResendOtpType type
+    ) {
+        authService.resendOtpRequest(request, type);
+        return ApiResponse.<Void>builder()
+                .build();
+    }
+
+    @PostMapping("/verify-otp")
+    public ApiResponse<AuthenticationResponse> verifyOtp(@RequestBody @Valid VerifyOtpRequest request) {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .data(authService.verifyOtp(request))
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse<AuthenticationResponse> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .data(authService.resetPassword(request))
                 .build();
     }
 
