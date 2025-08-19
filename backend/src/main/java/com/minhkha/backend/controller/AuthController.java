@@ -5,7 +5,7 @@ import com.minhkha.backend.dto.response.ApiResponse;
 import com.minhkha.backend.dto.response.AuthenticationResponse;
 import com.minhkha.backend.dto.response.IntrospectResponse;
 import com.minhkha.backend.eums.AuthProvider;
-import com.minhkha.backend.eums.ResendOtpType;
+import com.minhkha.backend.eums.MailType;
 import com.minhkha.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +31,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ApiResponse<Void> register(
+    public ApiResponse<AuthenticationResponse> register(
             @RequestBody @Valid UserCreateRequest request
     ) {
-        authService.register(request);
-        return ApiResponse.<Void>builder()
+        return ApiResponse.<AuthenticationResponse>builder()
+                .data(authService.register(request))
                 .build();
     }
 
@@ -49,19 +49,12 @@ public class AuthController {
     }
 
     @PostMapping("/send-otp")
-    public ApiResponse<Void> resendOtp(
-            @RequestBody @Valid ResendOtpRequest request,
-            @RequestParam ResendOtpType type
+    public ApiResponse<Void> sendOtp(
+            @RequestBody @Valid SendOtpRequest request,
+            @RequestParam MailType type
     ) {
-        authService.resendOtpRequest(request, type);
+        authService.sendOtp(request, type);
         return ApiResponse.<Void>builder()
-                .build();
-    }
-
-    @PostMapping("/verify-otp")
-    public ApiResponse<AuthenticationResponse> verifyOtp(@RequestBody @Valid VerifyOtpRequest request) {
-        return ApiResponse.<AuthenticationResponse>builder()
-                .data(authService.verifyOtp(request))
                 .build();
     }
 

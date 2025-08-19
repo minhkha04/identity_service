@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import useRoutesCustom from './hooks/useRoutesCustom.jsx'
+import { ConfigProvider, message } from 'antd'
+import { createTheme, ThemeProvider } from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { createContext } from 'react'
 
-function App() {
-  const [count, setCount] = useState(0)
+export const NotificationContext = createContext()
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function App () {
+  const [messageApi, contextHolder] = message.useMessage()
+  const handleNotification = (type, content) => {
+    messageApi.open({
+      type,
+      content
+    })
+  }
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#000000',
+        contrastText: '#fff'
+      },
+      secondary: {
+        main: '#f50057',
+      },
+    },
+  })
+
+  return <NotificationContext.Provider value={{ handleNotification }}>
+    <ThemeProvider theme={theme}>
+      <ConfigProvider theme={{
+        token: {
+          colorPrimary: '#000000',
+        },
+      }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          {contextHolder}
+          {useRoutesCustom()}
+        </LocalizationProvider>
+      </ConfigProvider>
+    </ThemeProvider>
+  </NotificationContext.Provider>
+
 }
 
 export default App

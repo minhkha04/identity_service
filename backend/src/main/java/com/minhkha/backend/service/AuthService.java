@@ -12,6 +12,7 @@ import com.minhkha.backend.mapper.UserMapper;
 import com.minhkha.backend.repository.UserRepository;
 import com.minhkha.backend.strategy.AuthStrategyFactory;
 import com.minhkha.backend.utils.OtpUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +38,8 @@ public class AuthService {
         return authStrategyFactory.getStrategy(authProvider).login(request);
     }
 
-    public void register(UserCreateRequest request) {
+    @Transactional
+    public AuthenticationResponse register(UserCreateRequest request) {
         if (userRepository.existsUserByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.USER_ALREADY_EXIST);
         }
@@ -46,15 +48,10 @@ public class AuthService {
         user.setCreatedAt(LocalDateTime.now());
         user.setRole(Role.USER);
         userRepository.save(user);
-        String otp = OtpUtil.generateOtp();
-        mailOtpService.create(request.getEmail(), otp);
-        MailRequest mailRequest = MailRequest.builder()
-                .mailType(MailType.VERIFY_EMAIL)
-                .toEmail(request.getEmail())
-                .subject("Verify your email")
-                .params(Map.of("otp", otp))
+        mailOtpService.verify(request.getEmail(), request.getOtp());
+        return AuthenticationResponse.builder()
+                .token(jwtProvider.generateToken(user))
                 .build();
-        mailService.sendMail(mailRequest);
     }
 
     public IntrospectResponse introspect(IntrospectRequest request) {
@@ -70,29 +67,27 @@ public class AuthService {
                 .build();
     }
 
-    public void resendOtpRequest(ResendOtpRequest request, ResendOtpType type) {
+    public void sendOtp(SendOtpRequest request, MailType type) {
         switch (type) {
-            case REGISTER -> {
-                User user = userRepository.findUserByEmail(request.getEmail())
-                        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+            case REGISTER_ACCOUNT -> {
                 String otp = OtpUtil.generateOtp();
-                mailOtpService.create(user.getEmail(), otp);
+                mailOtpService.create(request.getEmail(), otp);
                 MailRequest mailRequest = MailRequest.builder()
-                        .mailType(MailType.VERIFY_EMAIL)
-                        .toEmail(user.getEmail())
+                        .mailType(MailType.REGISTER_ACCOUNT)
+                        .toEmail(request.getEmail())
                         .subject("Verify your email")
                         .params(Map.of("otp", otp))
                         .build();
                 mailService.sendMail(mailRequest);
             }
             case RESET_PASSWORD -> {
-                User user = userRepository.findUserByEmail(request.getEmail())
+                userRepository.findUserByEmail(request.getEmail())
                         .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
                 String otp = OtpUtil.generateOtp();
-                mailOtpService.create(user.getEmail(), otp);
+                mailOtpService.create(request.getEmail(), otp);
                 MailRequest mailRequest = MailRequest.builder()
                         .mailType(MailType.RESET_PASSWORD)
-                        .toEmail(user.getEmail())
+                        .toEmail(request.getEmail())
                         .subject("Change your password")
                         .params(Map.of("otp", otp))
                         .build();
@@ -100,15 +95,6 @@ public class AuthService {
             }
             default -> throw new AppException(ErrorCode.RESEND_OTP_TYPE_INVALID);
         }
-    }
-
-    public AuthenticationResponse verifyOtp(VerifyOtpRequest request) {
-        User user = userRepository.findUserByEmail(request.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        mailOtpService.verify(request.getEmail(), request.getOtp());
-        return AuthenticationResponse.builder()
-                .token(jwtProvider.generateToken(user))
-                .build();
     }
 
     public AuthenticationResponse resetPassword(ResetPasswordRequest request) {

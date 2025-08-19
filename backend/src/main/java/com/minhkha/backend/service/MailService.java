@@ -34,7 +34,7 @@ public class MailService {
     private String generateHtml(MailRequest request) {
         String html;
         switch (request.getMailType()) {
-            case VERIFY_EMAIL -> html = templateRender.render("verify-email.html", request.getParams());
+            case REGISTER_ACCOUNT -> html = templateRender.render("verify-email.html", request.getParams());
             case RESET_PASSWORD -> html = templateRender.render("reset-password.html", request.getParams());
             default -> throw new AppException(ErrorCode.EMAIL_TYPE_INVALID);
         }

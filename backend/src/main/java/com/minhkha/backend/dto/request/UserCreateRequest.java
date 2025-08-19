@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public class UserCreateRequest {
 
     @Email(message = "Email không đúng định dạng")
+    @NotBlank(message = "Email không được để trống")
     String email;
 
     @Size(min = 6, max = 255, message = "Mật khẩu phải từ 6 đến 255 ký tự")
@@ -31,4 +32,9 @@ public class UserCreateRequest {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @BirthDate(min = 21, message = "Bạn phải đủ 21 tuổi")
     LocalDate birthDate;
+
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(max = 6, min = 6, message = "Otp phải có 6 ký tự")
+    @Pattern(regexp = "^[0-9]{6}$", message = "Mã OTP chỉ được chứa số")
+    String otp;
 }
