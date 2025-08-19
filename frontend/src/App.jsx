@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { createContext } from 'react'
+import { AuthProvider } from './components/context/AuthContext.jsx'
 
 export const NotificationContext = createContext()
 
@@ -28,20 +29,24 @@ function App () {
     },
   })
 
-  return <NotificationContext.Provider value={{ handleNotification }}>
-    <ThemeProvider theme={theme}>
-      <ConfigProvider theme={{
-        token: {
-          colorPrimary: '#000000',
-        },
-      }}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          {contextHolder}
-          {useRoutesCustom()}
-        </LocalizationProvider>
-      </ConfigProvider>
-    </ThemeProvider>
-  </NotificationContext.Provider>
+  return (
+    <AuthProvider>
+      <NotificationContext.Provider value={{ handleNotification }}>
+        <ThemeProvider theme={theme}>
+          <ConfigProvider theme={{
+            token: {
+              colorPrimary: '#000000',
+            },
+          }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {contextHolder}
+              {useRoutesCustom()}
+            </LocalizationProvider>
+          </ConfigProvider>
+        </ThemeProvider>
+      </NotificationContext.Provider>
+    </AuthProvider>
+  )
 
 }
 

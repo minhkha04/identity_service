@@ -16,4 +16,5 @@ public class UserResponse {
     Date birthDate;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+    String avatarUrl;
 }

@@ -5,8 +5,11 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { Button } from '@mui/material'
 import { authService } from '../../service/auth.service.js'
 import { NotificationContext } from '../../App.jsx'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateUserInfo } from '../../redux/slices/userInfoSlice.js'
+import { userService } from '../../service/user.service.js'
 
-const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
+const AuthModal = ({ isOpen, onClose, mode, setMode, setIsLoggedIn }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
@@ -16,7 +19,8 @@ const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
   const [countdown, setCountdown] = useState(0)
   const [isCounting, setIsCounting] = useState(false)
   const valueContext = useContext(NotificationContext)
-
+  const { user}  = useSelector((state) => state.userInfoSlice)
+  const dispatch = useDispatch()
   useEffect(() => {
     let timer
     if (isCounting && countdown > 0) {
@@ -31,12 +35,23 @@ const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
   }, [isCounting, countdown])
 
   const handleSubmit = () => {
+    setConfirmLoading(true)
     if (mode === 'login') {
       authService.login({ email, password }, 'EMAIL')
         .then((res) => {
           console.log(res.data.data.token)
           localStorage.setItem('token', JSON.stringify(res.data.data.token))
+          setIsLoggedIn(true)
           onClose()
+          userService.getMyInfo()
+            .then(res => {
+              dispatch(updateUserInfo(res.data.data))
+              console.log("User info fetched successfully")
+              console.log(res.data.data)
+            })
+            .catch(err => {
+              console.log(err)
+            })
           valueContext.handleNotification('success', 'Login successfully')
           setEmail('')
           setPassword('')
@@ -58,6 +73,7 @@ const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
         .then((res) => {
           console.log(res.data.data.token)
           localStorage.setItem('token', JSON.stringify(res.data.data.token))
+          setIsLoggedIn(true)
           onClose()
           valueContext.handleNotification('success', 'Register successfully')
           setEmail('')
@@ -76,6 +92,7 @@ const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
         .then((res) => {
           console.log(res.data.data.token)
           localStorage.setItem('token', JSON.stringify(res.data.data.token))
+          setIsLoggedIn(true)
           onClose()
           valueContext.handleNotification('success', 'Reset password successfully')
           setEmail('')

@@ -33,6 +33,8 @@ public class User {
     @Column(length = 50, nullable = false)
     String fullName;
 
+    String avatarUrl;
+
     @Column(nullable = false)
     LocalDateTime createdAt;
 

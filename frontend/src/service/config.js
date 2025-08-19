@@ -6,25 +6,18 @@ const http = axios.create({
   headers: {},
 })
 
-
-// http.interceptors.request.use(
-//   function (config) {
-//     if (config.skipAuth) {
-//       return config;
-//     }
-//     // lay token tu local
-//     const token = localStorage.getItem("token");
-//     if (token) {
-//       const newToken = JSON.parse(token);
-//       config.headers.Authorization = "Bearer " + newToken;
-//     }
-//     return config;
-//   },
-//   function (error) {
-//     // Do something with request error
-//     return Promise.reject(error);
-//   }
-// );
+http.interceptors.request.use(
+  function (config) {
+    if (config.url.includes('auth') || config.url.includes('public')) {
+      return config;
+    }
+    const token = JSON.parse(localStorage.getItem("token"));
+    if (token) {
+      config.headers.Authorization = "Bearer " + token;
+    }
+    return config;
+  },
+);
 
 // Add a response interceptor
 http.interceptors.response.use(

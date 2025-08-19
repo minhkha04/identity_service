@@ -31,6 +31,7 @@ public class ApplicationInitConfig {
                         .fullName("Admin")
                         .role(Role.ADMIN)
                         .createdAt(LocalDateTime.now())
+                        .avatarUrl("https://res.cloudinary.com/di6hi1r0g/image/upload/v1749288955/default-avatar_qwb4ru.png")
                         .build();
                 userRepository.save(user);
                 log.warn("Admin user has been created!");

@@ -15,5 +15,9 @@ export const authService = {
 
   restPassword: (data) => {
     return http.post('v1/auth/reset-password', data)
+  },
+
+  introspect: (data) => {
+    return http.post('v1/auth/introspect', data)
   }
 };
