@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { path } from '../../common/path.js'
 import { assets } from '../../assets/assets.jsx'
 import AuthModal from './AuthModal.jsx'
@@ -50,7 +50,33 @@ const UserHeader = () => {
             <img src={assets.logo} alt={'logo'} className={'h-16 w-16'}/>
           </Link>
         </div>
-        <nav>
+        <nav className={'flex flex-row gap-4 items-center'}>
+          <ul className={'flex flex-row gap-4'}>
+            <li>
+              <NavLink
+                to={path.homePage}
+                className={({ isActive }) =>
+                  isActive
+                    ? 'text-black font-bold border-b-2 border-black'
+                    : 'text-gray-700 hover:text-black'
+                }
+              >
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to={path.profilePage}
+                className={({ isActive }) =>
+                  isActive
+                    ? 'text-black font-bold border-b-2 border-black'
+                    : 'text-gray-700 hover:text-black'
+                }
+              >
+                Profile
+              </NavLink>
+            </li>
+          </ul>
           {!isLoggedIn
             ? <div className={'flex flex-row gap-4'}>
               <Button onClick={() => {
