@@ -5,6 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { createContext } from 'react'
 import { AuthProvider } from './components/context/AuthContext.jsx'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 export const NotificationContext = createContext()
 
@@ -30,6 +31,7 @@ function App () {
   })
 
   return (
+    <GoogleOAuthProvider clientId="838408098751-h9rup4lj1odtvujm8riudfimmo7kf5bi.apps.googleusercontent.com">
     <AuthProvider>
       <NotificationContext.Provider value={{ handleNotification }}>
         <ThemeProvider theme={theme}>
@@ -46,6 +48,7 @@ function App () {
         </ThemeProvider>
       </NotificationContext.Provider>
     </AuthProvider>
+    </GoogleOAuthProvider>
   )
 
 }

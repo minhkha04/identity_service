@@ -24,7 +24,6 @@ public class User {
     @Column(unique = true, nullable = false)
     String email;
 
-    @Column(nullable = false)
     String password;
 
     @Enumerated(EnumType.STRING)
@@ -33,6 +32,7 @@ public class User {
     @Column(length = 50, nullable = false)
     String fullName;
 
+    @Column(length = 2048)
     String avatarUrl;
 
     @Column(nullable = false)

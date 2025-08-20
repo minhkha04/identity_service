@@ -7,15 +7,16 @@ import { Avatar, Button, Menu, MenuItem } from '@mui/material'
 import { AuthContext } from '../context/AuthContext.jsx'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateUserInfo } from '../../redux/slices/userInfoSlice.js'
+import { NotificationContext } from '../../App.jsx'
 
 const UserHeader = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [model, setModel] = useState('')
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
   const [anchorEl, setAnchorEl] = useState(false)
-  const open = anchorEl
   const { userInfo } = useSelector((state) => state.userInfoSlice)
   const dispatch = useDispatch()
+  const valueContext = useContext(NotificationContext)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -29,6 +30,7 @@ const UserHeader = () => {
     dispatch(updateUserInfo(null))
     setIsLoggedIn(false)
     setAnchorEl(false)
+    valueContext.handleNotification('success', 'Logout successfully')
   }
 
   useEffect(() => {
